@@ -16,10 +16,6 @@ require("dotenv").config();
 
 // ---------------------------------------------------------------------------------------------------------------
 // switch/case of possible commands to use for liri app
-// * `my-tweets`
-// * `spotify-this-song`
-// * `movie-this`
-// * `do-what-it-says`
 
 	switch(liriArgument) {
 		case "my-tweets": myTweets(); break;
@@ -67,6 +63,82 @@ require("dotenv").config();
 			}
 		});
 	};
+
+	// Spotify function, uses the Spotify module to call the Spotify api
+	function spotifyThisSong(songName) {
+		var songName = process.argv[3];
+		if(!songName){
+			songName = "Quinn the Eskimo";
+		}
+
+		spotify.search({ type: "track", query: songName }, function(err, data) {
+			if(!err){
+				var songInfo = data.tracks.items;
+				for (var i = 0; i < 10; i++) {
+					if (songInfo[i] != undefined) {
+						var spotifyResults =
+						"Artist: " + songInfo[i].artists[0].name + "\r\n" +
+						"Song: " + songInfo[i].name + "\r\n" +
+						"Album the song is from: " + songInfo[i].album.name + "\r\n" +
+						"Preview Url: " + songInfo[i].preview_url + "\r\n" + 
+						"------------------------------ " + i + " ------------------------------" + "\r\n";
+						console.log(spotifyResults);
+						log(spotifyResults); // calling log function
+					}
+				}
+			}	
+			else {
+				console.log("Error :"+ err);
+				return;
+			}
+		});
+	};
+	// Movie function, uses the Request module to call the OMDB api
+	function movieThis(){
+		var movie = process.argv[3];
+		if(!movie){
+			movie = "mr nobody";
+		}
+		//params = movie
+		request("http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&r=json&tomatoes=true&apikey=trilogy", function (error, response, body) {
+			if (!error && response.statusCode == 200) {
+				var movieObject = JSON.parse(body);
+				console.log(movieObject); // Show the text in the terminal
+
+   				var movieResults = "------------------------------ start ------------------------------\n"+
+   				
+				 "Title: " + movieObject.Title +"\n"+
+				 "Year: " + movieObject.Year +"\n"+
+				 "Imdb Rating: " + movieObject.imdbRating +"\n"+
+				 "Rotten Tomatoes Rating: " + movieObject.Ratings[1].Value +"\n"+
+				// "Rotten Tomatoes URL: " + movieObject.tomatoURL + "\n" +
+				 "Country: " + movieObject.Country +"\n"+
+				 "Language: " + movieObject.Language +"\n"+
+				 "Plot: " + movieObject.Plot +"\n"+
+				 "Actors: " + movieObject.Actors +"\n"+				 
+				"------------------------------ finish ------------------------------" + "\n";
+				console.log(movieResults);
+				
+				log(movieResults); // calling log function
+
+			} else {
+				console.log("Error Error :"+ error);
+				return;
+			}
+		});
+	};
+	// Do What It Says function, uses the reads and writes module to access the random.txt file and do what's written in it
+	function doWhatItSays() {
+		fs.readFile("random.txt", "utf8", function(error, data){
+			if (!error) {
+				doWhatItSaysResults = data.split(",");
+				spotifyThisSong(doWhatItSaysResults[0], doWhatItSaysResults[1]);
+			} else {
+				console.log("Error occurred" + error);
+			}
+		});
+	};
+	//Do What It Says function, uses the reads and writes module to access the log.txt file and write everything that returns in terminal in the log.txt file
 	function log(logResults) {
 	  fs.appendFile("log.txt", logResults, (error) => {
 	    if(error) {
