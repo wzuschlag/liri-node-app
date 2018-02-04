@@ -2,6 +2,7 @@
 	require("dotenv").config();
 
 	var fs = require("fs"); //read, write & append files
+	var inquirer = require("inquirer");
 
 	var request = require("request");
 	var keys = require("./keys.js");
@@ -14,21 +15,55 @@
 
 	var liriArgument = process.argv[2]; //user inputs
 	var usersChoice = process.argv[3]; //user inputs
-	
-// switch/case of possible commands to use for liri app
 
-	switch(liriArgument) {
+//----------------- user prompt test ----------------------------------
+	inquirer.prompt([
+
+	  {
+	    type: "list",
+	    name: "liriArg",
+	    message: "Choose your option",
+	    choices: ["my-tweets", "spotify-this-song", "movie-this", "do-what-it-says"]
+	  },
+
+	  {
+	    type: "input",
+	    name: "typeName",
+	    message: "Just continue for do-what-it-says or enter your choice of twitter account, Song or Movie"
+	  }
+	  
+	]).then(function(user){
+		liriArgument = user.liriArg; //user inputs
+	    usersChoice = user.typeName; //user inputs
+	    console.log(liriArgument, usersChoice)
+
+	    switch(liriArgument) {
 		case "my-tweets": myTweets(); break;
 		case "spotify-this-song": spotifyThisSong(); break;
 		case "movie-this": movieThis(); break;
 		case "do-what-it-says": doWhatItSays(); break;
 		// Instructions displayed in terminal to the user
-		default: console.log("\nUse one of the following commands after 'node liri.js' : \n",
-			"1. my-tweets 'add any twitter account name without quotes'\n",
-			"2. spotify-this-song 'add any song name wrap name in quotes'\n",
-			"3. movie-this 'add any movie name wrap name in quotes'\n",
-			"4. do-what-it-says.\n");
-	};
+		default: console.log("\nUse one of the following commands after 'node liri.js' : \n");
+		};
+	});
+
+
+//------------------end user prompt test-------------------------------
+
+// switch/case of possible commands to use for liri app
+
+	// switch(liriArgument) {
+	// 	case "my-tweets": myTweets(); break;
+	// 	case "spotify-this-song": spotifyThisSong(); break;
+	// 	case "movie-this": movieThis(); break;
+	// 	case "do-what-it-says": doWhatItSays(); break;
+	// 	// Instructions displayed in terminal to the user
+	// 	default: console.log("\nUse one of the following commands after 'node liri.js' : \n",
+	// 		"1. my-tweets 'add any twitter account name without quotes'\n",
+	// 		"2. spotify-this-song 'add any song name wrap name in quotes'\n",
+	// 		"3. movie-this 'add any movie name wrap name in quotes'\n",
+	// 		"4. do-what-it-says.\n");
+	// };
 
 // Functions
 	// Tweet function, uses the Twitter module to call the Twitter api
