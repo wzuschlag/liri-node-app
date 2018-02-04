@@ -1,23 +1,20 @@
-require("dotenv").config();
-
 // Node module imports needed to run the functions
-	var fs = require("fs"); //reads and writes files
+	require("dotenv").config();
+
+	var fs = require("fs"); //read, write & append files
 
 	var request = require("request");
 	var keys = require("./keys.js");
 
-	var twitter = require("twitter");
+	var Twitter = require("twitter");
+	var twitter = new Twitter(keys.twitter); //Api keys and pass codes
+
 	var Spotify = require('node-spotify-api');
-	var spotify = new Spotify(keys.spotify);
+	var spotify = new Spotify(keys.spotify); //Api keys and pass codes
 
-	var liriArgument = process.argv[2];
-	var usersChoice = process.argv[3];
-	// var twitterUsername = process.argv[3];
-	// var movie = process.argv[3];
+	var liriArgument = process.argv[2]; //user inputs
+	var usersChoice = process.argv[3]; //user inputs
 	
-	// var client = new Twitter(keys.twitter);
-
-// ---------------------------------------------------------------------------------------------------------------
 // switch/case of possible commands to use for liri app
 
 	switch(liriArgument) {
@@ -32,22 +29,17 @@ require("dotenv").config();
 			"3. movie-this 'add any movie name wrap name in quotes'\n",
 			"4. do-what-it-says.\n");
 	};
-// ---------------------------------------------------------------------------------------------------------------
+
 // Functions
 	// Tweet function, uses the Twitter module to call the Twitter api
 	function myTweets() {
-		var client = new twitter({
-			consumer_key: keys.twitter.consumer_key,
-			consumer_secret: keys.twitter.consumer_secret,
-			access_token_key: keys.twitter.access_token_key,
-			access_token_secret: keys.twitter.access_token_secret, 
-		});
-		// var twitterUsername = process.argv[3];
+
 		if(!usersChoice){
-			usersChoice = "wzuschlag";
+			usersChoice = "Thesimpsons";
 		}
+
 		params = {screen_name: usersChoice};
-		client.get("statuses/user_timeline/", params, function(error, data, response){
+		twitter.get("statuses/user_timeline/", params, function(error, data, response){
 			if (!error) {
 				for(var i = 0; i < data.length; i++) {
 					//console.log(response); // Show the full response in the terminal
@@ -68,12 +60,11 @@ require("dotenv").config();
 	};
 
 	// Spotify function, uses the Spotify module to call the Spotify api
-	function spotifyThisSong(songName) {
-		//var songName = process.argv[3];
+	function spotifyThisSong() {
 		if(!usersChoice){
 			usersChoice = "Quinn the Eskimo";
 		}
-
+		console.log(usersChoice);
 		spotify.search({ type: "track", query: usersChoice }, function(err, data) {
 			if(!err){
 				var songInfo = data.tracks.items;
@@ -87,6 +78,7 @@ require("dotenv").config();
 						"------------------------------ " + i + " ------------------------------" + "\r\n";
 						console.log(spotifyResults);
 						log(spotifyResults); // calling log function
+
 					}
 				}
 			}	
@@ -103,11 +95,9 @@ require("dotenv").config();
 			usersChoice = "mr nobody";
 		}
 		console.log(usersChoice);
-		//params = movie
 		request("http://www.omdbapi.com/?t=" + usersChoice + "&y=&plot=short&r=json&tomatoes=true&apikey=trilogy", function (error, response, body) {
 			if (!error && response.statusCode == 200) {
 				var movieObject = JSON.parse(body);
-				//console.log(movieObject); // Show the text in the terminal
    				var movieResults = 
    				"------------------------------ start ------------------------------\n"+
 				 "Title: " + movieObject.Title +"\n"+
@@ -119,7 +109,7 @@ require("dotenv").config();
 				 "Language: " + movieObject.Language +"\n"+
 				 "Plot: " + movieObject.Plot +"\n"+
 				 "Actors: " + movieObject.Actors +"\n"+				 
-				"------------------------------ finish ------------------------------" + "\n";
+				"------------------------------ finish ------------------------------\n";
 				console.log(movieResults);				
 				log(movieResults); // calling log function
 
@@ -129,18 +119,19 @@ require("dotenv").config();
 			}
 		});
 	};
-	// Do What It Says function, uses the reads and writes module to access the random.txt file and do what's written in it
+	// Do What It Says function, uses the reads and writes module to access the random.txt file and do what's written in it.
 	function doWhatItSays(){
 		fs.readFile("random.txt", "utf8", function(error, data){
 			if (!error) {
-				doWhatItSaysResults = data.split(",");
+				doWhatItSaysResults = data.split(",");				
+				usersChoice = doWhatItSaysResults[1];
 				console.log(doWhatItSaysResults[0],doWhatItSaysResults[1]);
-		
+
 				switch(doWhatItSaysResults[0]) {
-					case "my-tweets": myTweets(doWhatItSaysResults[1]); break;
-					case "spotify-this-song": spotifyThisSong(doWhatItSaysResults[1]); break;
-					case "movie-this": movieThis(doWhatItSaysResults[1]); break;
-					// case "do-what-it-says": doWhatItSays(doWhatItSaysResults[1]); break;
+					case "my-tweets": myTweets(usersChoice); break;
+					case "spotify-this-song": spotifyThisSong(usersChoice); break;
+					case "movie-this": movieThis(usersChoice); break;
+					case "do-what-it-says": doWhatItSays(usersChoice); break;
 					default: console.log("\nCheck that correct spelling and syntax was used in creating the random.txt file : \n");
 				};
 
@@ -149,7 +140,7 @@ require("dotenv").config();
 			}
 		});
 	};
-	//Do What It Says function, uses the reads and writes module to access the log.txt file and write everything that returns in terminal in the log.txt file
+	//Uses the append module to access log.txt file and writes/appends everything that returns in terminal window to log.txt file.
 	function log(logResults) {
 	  fs.appendFile("log.txt", logResults, function(error) {
 	    if(error) {
