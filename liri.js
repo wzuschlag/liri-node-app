@@ -130,7 +130,7 @@
 			usersChoice = "mr nobody";
 		}
 		console.log(usersChoice);
-		request("http://www.omdbapi.com/?t=" + usersChoice + "&y=&plot=short&r=json&tomatoes=true&apikey=trilogy", function (error, response, body) {
+		request("http://www.omdbapi.com/?t=" + usersChoice + "&y=&plot=short&r=json&tomatoes=true&apikey=baca7f8", function (error, response, body) {
 			if (!error && response.statusCode == 200) {
 				var movieObject = JSON.parse(body);
    				var movieResults = 
