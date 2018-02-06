@@ -13,10 +13,9 @@
 	var Spotify = require('node-spotify-api');
 	var spotify = new Spotify(keys.spotify); //Api keys and pass codes
 
-	var liriArgument = process.argv[2]; //user inputs
-	var usersChoice = process.argv[3]; //user inputs
+	//var liriArgument = process.argv[2]; //user inputs
+	//var usersChoice = process.argv[3]; //user inputs
 
-//----------------- user prompt test ----------------------------------
 	inquirer.prompt([
 
 	  {
@@ -29,7 +28,8 @@
 	  {
 	    type: "input",
 	    name: "typeName",
-	    message: "Just continue for do-what-it-says or enter your choice of twitter account, Song or Movie"
+	    message: "If your choice was twitter, Song or Movie.  Please enter your search choice or 'enter' for default choice.\n" +
+	    		 "for do-what-it-says just 'enter'."
 	  }
 	  
 	]).then(function(user){
@@ -47,25 +47,6 @@
 		};
 	});
 
-
-//------------------end user prompt test-------------------------------
-
-// switch/case of possible commands to use for liri app
-
-	// switch(liriArgument) {
-	// 	case "my-tweets": myTweets(); break;
-	// 	case "spotify-this-song": spotifyThisSong(); break;
-	// 	case "movie-this": movieThis(); break;
-	// 	case "do-what-it-says": doWhatItSays(); break;
-	// 	// Instructions displayed in terminal to the user
-	// 	default: console.log("\nUse one of the following commands after 'node liri.js' : \n",
-	// 		"1. my-tweets 'add any twitter account name without quotes'\n",
-	// 		"2. spotify-this-song 'add any song name wrap name in quotes'\n",
-	// 		"3. movie-this 'add any movie name wrap name in quotes'\n",
-	// 		"4. do-what-it-says.\n");
-	// };
-
-// Functions
 	// Tweet function, uses the Twitter module to call the Twitter api
 	function myTweets() {
 
@@ -125,7 +106,7 @@
 	};
 	// Movie function, uses the Request module to call the OMDB api
 	function movieThis(){
-		// var movie = process.argv[3];
+
 		if(!usersChoice){
 			usersChoice = "mr nobody";
 		}
