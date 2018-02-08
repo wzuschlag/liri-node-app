@@ -28,8 +28,8 @@
 	  {
 	    type: "input",
 	    name: "typeName",
-	    message: "If your choice was twitter, Song or Movie.  Please enter your search choice or 'enter' for default choice.\n" +
-	    		 "for do-what-it-says just 'enter'."
+	    message: "If choice was Twitter, Spotify or Movies.  Please enter a selection to search or 'enter' for default option.\n" +
+	    		 "for do-what-it-says just hit 'enter'"
 	  }
 	  
 	]).then(function(user){
@@ -58,12 +58,12 @@
 		twitter.get("statuses/user_timeline/", params, function(error, data, response){
 			if (!error) {
 				for(var i = 0; i < data.length; i++) {
-					//console.log(response); // Show the full response in the terminal
 					var twitterResults = 
+					"------------------------------ " + i + " ------------------------------\n" +
 					"@" + data[i].user.screen_name + ": " + 
 					data[i].text + "\n" + 
 					data[i].created_at + "\n" + 
-					"------------------------------ " + i + " ------------------------------\n";
+					"----------------------------------------------------------------\n";
 					console.log(twitterResults);
 					log(twitterResults); // calling log function
 				}
@@ -87,11 +87,12 @@
 				for (var i = 0; i < 10; i++) {
 					if (songInfo[i] != undefined) {
 						var spotifyResults =
-						"Artist: " + songInfo[i].artists[0].name + "\r\n" +
-						"Song: " + songInfo[i].name + "\r\n" +
-						"Album the song is from: " + songInfo[i].album.name + "\r\n" +
-						"Preview Url: " + songInfo[i].preview_url + "\r\n" + 
-						"------------------------------ " + i + " ------------------------------" + "\r\n";
+						"------------------------------ " + i + " ------------------------------\n" +
+						"Artist: " + songInfo[i].artists[0].name + "\n" +
+						"Song: " + songInfo[i].name + "\n" +
+						"Album the song is from: " + songInfo[i].album.name + "\n" +
+						"Preview Url: " + songInfo[i].preview_url + "\n" + 
+						"---------------------------------------------------------------\n";
 						console.log(spotifyResults);
 						log(spotifyResults); // calling log function
 
